@@ -152,7 +152,45 @@ Your n8n instance will start up with all your workflows and settings restored ex
 
 ---
 
-## 3. File Manifest
+## 3. Troubleshooting Common Workflow Issues
+
+This section covers common problems you might encounter when building and updating n8n workflows with the MCP server.
+
+### Workflow Won't Activate
+- **Issue**: Workflow fails to activate with "no node to start the workflow" error.
+  - **Solution**: Ensure your workflow has a valid trigger node (like a Manual Trigger, Webhook, or Schedule Trigger). The MCP server cannot activate workflows without a proper trigger.
+
+### API Connection Issues
+- **Issue**: "Could not connect to n8n API" or similar errors.
+  - **Solution**:
+    1. Verify `N8N_API_URL` includes the correct port and `/api/v1` path
+    2. Check that your API key is valid and has the correct permissions
+    3. Ensure your n8n instance is running and accessible
+
+### Webhook Problems
+- **Issue**: Webhook triggers not working or returning 404 errors.
+  - **Solution**:
+    1. Make sure the webhook URL is correct (check for typos)
+    2. Verify the webhook is properly configured in your workflow
+    3. If using authentication, ensure credentials are correctly set in both n8n and your MCP config
+
+### Debugging Tips
+1. **Check Logs**: View n8n logs with `docker-compose logs -f`
+2. **Test API**: Use `curl` to test the n8n API directly:
+   ```bash
+   curl -X GET "http://localhost:5679/api/v1/workflows" \
+     -H "X-N8N-API-KEY: your-api-key"
+   ```
+3. **Inspect Workflow**: Use the n8n UI to manually test individual nodes
+
+### Common Error Messages
+- **"Invalid API key"**: Regenerate your API key in n8n and update your MCP config
+- **"Connection refused"**: Check if n8n is running and the port is correct
+- **"Workflow not found"**: The workflow ID in your request doesn't exist (may have been deleted)
+
+---
+
+## 4. File Manifest
 
 Here are the essential files for this project:
 
