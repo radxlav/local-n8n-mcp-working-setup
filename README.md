@@ -72,7 +72,7 @@ Open your Windsurf `mcp_config.json` file. You can usually find it at `~/.codeiu
         "-y",
         "@supabase/mcp-server-supabase@dev",
         "--access-token",
-        "sbp_v0_d4c3b3b96773f940b5c155c466b12d47d1b248dd"
+        "your-supabase-access-token"
       ]
     },
     "cloudflare-observability": {
@@ -83,7 +83,7 @@ Open your Windsurf `mcp_config.json` file. You can usually find it at `~/.codeiu
       ]
     },
     "n8n-local": {
-      "command": "/Users/radoslawkmita/.npm-global/bin/n8n-mcp-server",
+      "command": "/path/to/your/n8n-mcp-server",
       "args": [],
       "env": {
         "MCP_MODE": "stdio",
@@ -113,7 +113,8 @@ Open your Windsurf `mcp_config.json` file. You can usually find it at `~/.codeiu
 ```
 
 **Key Configuration Points:**
--   **`command`**: This is the absolute path to the MCP server executable.
+-   **`command`**: This is the absolute path to the MCP server executable. You can find it by running `which n8n-mcp-server`.
+-   **`--access-token`**: Your Supabase access token, if you are using the Supabase MCP.
 -   **`N8N_API_URL`**: This must point to your n8n instance's API endpoint. The default is `http://localhost:5679/api/v1`. The `/api/v1` path is crucial and often missed.
 -   **`N8N_API_KEY`**: The secret key for authentication.
 
