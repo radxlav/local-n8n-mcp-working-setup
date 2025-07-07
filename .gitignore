@@ -3,3 +3,13 @@
 
 # Ignore node modules
 node_modules/
+
+# Ignore database files
+n8n-data/database.sqlite
+n8n-data/database.sqlite-*
+
+# Ignore logs
+n8n-data/*.log
+
+# Ignore local configuration
+n8n-data/config
