@@ -32,46 +32,96 @@ This command will build the n8n Docker image (if it doesn't exist) and start the
 
 ### Step 3: Configure Your AI Assistant (Windsurf)
 
-Your AI assistant needs to be told how to connect to the n8n-MCP server. Add the following configuration to your assistant's MCP server settings. You will also need to create a `.env` file in this directory.
+Your AI assistant connects to n8n through an MCP server. Instead of running another Docker container, we'll use a simpler method: running the MCP server directly on your local machine.
 
-**1. Create a `.env` file:**
+**1. Install the n8n MCP Server:**
 
-Create a file named `.env` in this directory and add your API key to it:
+If you haven't already, install the `n8n-mcp-server` globally using npm:
 
-```
-N8N_API_KEY=your-api-key-from-step-2
+```bash
+npm install -g @leonardsellem/n8n-mcp-server
 ```
 
 **2. Configure Windsurf:**
 
-Add the following JSON block to your Windsurf MCP configuration file:
+Open your Windsurf `mcp_config.json` file. You can usually find it at `~/.codeium/windsurf/mcp_config.json`. Add the following server configuration.
+
+*__Important:__ This is a complete, working example. You will need to replace the placeholder values for `command` and `N8N_API_KEY` with your specific details.*
 
 ```json
 {
   "mcpServers": {
-    "n8n-mcp": {
-      "command": "docker",
+    "playwright": {
+      "command": "npx",
       "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e", "MCP_MODE=stdio",
-        "-e", "LOG_LEVEL=error",
-        "-e", "DISABLE_CONSOLE_OUTPUT=true",
-        "-e", "N8N_API_URL=http://host.docker.internal:5679",
-        "-e", "N8N_API_KEY=${N8N_API_KEY}",
-        "ghcr.io/czlonkowski/n8n-mcp:latest"
+        "-y",
+        "@executeautomation/playwright-mcp-server"
+      ],
+      "env": {}
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
       ]
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@dev",
+        "--access-token",
+        "sbp_v0_d4c3b3b96773f940b5c155c466b12d47d1b248dd"
+      ]
+    },
+    "cloudflare-observability": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://observability.mcp.cloudflare.com/sse"
+      ]
+    },
+    "n8n-local": {
+      "command": "/Users/radoslawkmita/.npm-global/bin/n8n-mcp-server",
+      "args": [],
+      "env": {
+        "MCP_MODE": "stdio",
+        "LOG_LEVEL": "error",
+        "DISABLE_CONSOLE_OUTPUT": "true",
+        "N8N_API_URL": "http://localhost:5679/api/v1",
+        "N8N_API_KEY": "your-api-key-from-step-2"
+      },
+      "disabled": false
+    },
+    "n8n-windsurf": {
+      "command": "npx",
+      "args": [
+        "n8n-mcp"
+      ],
+      "env": {
+        "MCP_MODE": "stdio",
+        "LOG_LEVEL": "error",
+        "DISABLE_CONSOLE_OUTPUT": "true",
+        "N8N_API_URL": "http://localhost:5679/api/v1",
+        "N8N_API_KEY": "your-api-key-from-step-2"
+      },
+      "disabled": true
     }
   }
 }
 ```
 
-*Note: `http://host.docker.internal:5679` is a special DNS name that allows the MCP Docker container to communicate with the n8n container running on your host machine.*
+**Key Configuration Points:**
+-   **`command`**: This is the absolute path to the MCP server executable.
+-   **`N8N_API_URL`**: This must point to your n8n instance's API endpoint. The default is `http://localhost:5679/api/v1`. The `/api/v1` path is crucial and often missed.
+-   **`N8N_API_KEY`**: The secret key for authentication.
+
+*Note: This configuration replaces the previous Docker-based setup. It's simpler to manage and debug.*
 
 ### Step 4: Restart and Verify
 
-Restart your AI assistant (Windsurf) to apply the new configuration. You can test the connection by asking the AI to "list n8n workflows".
+Restart your AI assistant (Windsurf) to apply the new configuration. You can test the connection by asking the AI to "list n8n workflows" or "create a new workflow".
 
 ---
 
